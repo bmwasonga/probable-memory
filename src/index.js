@@ -16,25 +16,27 @@ const requestOptions = {
   gzip: true,
 };
 
-let filtered;
-rp(requestOptions)
-  .then((response) => {
-    let responsedata = response.data;
-    return (filtered = responsedata.map((name, idx) => {
-      // console.log('the names are', name.name, idx + 1);
-    }));
-  })
-  .catch((err) => {
-    console.log('API call error:', err.message);
-  });
-
 const client = new Elarian({
   apiKey: process.env.ELARIAN_API_KEY,
   orgId: process.env.ELARIAN_ORG_ID,
   appId: process.env.ELARIAN_APP_ID,
 });
 
-console.log('filtered data is ', filtered);
+rp(requestOptions)
+  .then((response) => {
+    const thevalues = response.data;
+    // console.log(`values: ${thevalues}`);
+    getValues(thevalues);
+  })
+  .catch((err) => {
+    console.log('API call error:', err.message);
+  });
+
+function getValues(values) {
+  console.log(`value1: ${values}`);
+}
+
+//console.log('filtered data is ', filteredresponse);
 
 async function handleUssd(notification, customer, appData, callback) {
   console.log(notification);
@@ -44,7 +46,7 @@ async function handleUssd(notification, customer, appData, callback) {
   const input = notification.input.text;
 
   let { name, choice = 0 } = customerData2;
-  name = customer.customerNumber.number;
+  number = customer.customerNumber.number;
 
   const menu = {
     text: '',
@@ -52,8 +54,8 @@ async function handleUssd(notification, customer, appData, callback) {
   };
 
   if (input === '') {
-    menu.text = ` Hey there ${name}, welcome`;
-    menu.text += 'Hey there  wanna share any feedback?\n';
+    menu.text = ` Hey there ${name},`;
+    menu.text += 'Choose a coin to follow?\n';
     menu.text += 'Hey there  and welcome\n';
 
     callback(menu, appData);
