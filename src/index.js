@@ -1,11 +1,40 @@
 const { Elarian } = require('elarian');
 require('dotenv').config();
+const rp = require('request-promise');
+
+const requestOptions = {
+  uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
+  qs: {
+    start: '1',
+    limit: '5',
+    convert: 'usd',
+  },
+  headers: {
+    'X-CMC_PRO_API_KEY': '9a916bac-4909-492a-8eb9-395dc13d0234',
+  },
+  json: true,
+  gzip: true,
+};
+
+let filtered;
+rp(requestOptions)
+  .then((response) => {
+    let responsedata = response.data;
+    return (filtered = responsedata.map((name, idx) => {
+      // console.log('the names are', name.name, idx + 1);
+    }));
+  })
+  .catch((err) => {
+    console.log('API call error:', err.message);
+  });
 
 const client = new Elarian({
   apiKey: process.env.ELARIAN_API_KEY,
   orgId: process.env.ELARIAN_ORG_ID,
   appId: process.env.ELARIAN_APP_ID,
 });
+
+console.log('filtered data is ', filtered);
 
 async function handleUssd(notification, customer, appData, callback) {
   console.log(notification);
@@ -15,6 +44,7 @@ async function handleUssd(notification, customer, appData, callback) {
   const input = notification.input.text;
 
   let { name, choice = 0 } = customerData2;
+  name = customer.customerNumber.number;
 
   const menu = {
     text: '',
